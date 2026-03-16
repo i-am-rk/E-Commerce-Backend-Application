@@ -1,0 +1,15 @@
+name: dev-YAML
+environment: development
+spring:
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:devdb
+  jpa:
+    show-sql: true
+    hibernate:
+       ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
