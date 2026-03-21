@@ -37,15 +37,25 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
-        Product product = mapper.toEntity(productDTO);
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
-        double specialPrice = product.getPrice() - ((productDTO.getDiscount() * 0.01) * product.getPrice());
-        product.setCategory(category);
-        product.setImage("default.png");
-        product.setSpecialPrice(specialPrice);
-        Product savedProduct = productRepository.save(product);
-        return mapper.toDTO(savedProduct);
+
+        // Check if product already exist for category
+        List<Product> productsForCategory = category.getProducts();
+        boolean productExist = productsForCategory.stream()
+                .anyMatch(p -> productDTO.getProductName().equalsIgnoreCase(p.getProductName()));
+
+        if(!productExist){
+            Product product = mapper.toEntity(productDTO);
+            double specialPrice = product.getPrice() - ((productDTO.getDiscount() * 0.01) * product.getPrice());
+            product.setCategory(category);
+            product.setImage("default.png");
+            product.setSpecialPrice(specialPrice);
+            Product savedProduct = productRepository.save(product);
+            return mapper.toDTO(savedProduct);
+        }else{
+            throw new APIException("Product by productName: " + productDTO + " already exist");
+        }
     }
 
     @Override
@@ -150,21 +160,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
-        // Get Product from DB
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-
-        // Upload file to server
-        // Get file name of uploaded image
         String fileName = fileService.uploadImage(image);
-
-        // update the new file name to to the product
         existingProduct.setImage(fileName);
-
-        // save the product
         Product savedProduct = productRepository.save(existingProduct);
-
-        // return dto
         return mapper.toDTO(savedProduct);
     }
 
