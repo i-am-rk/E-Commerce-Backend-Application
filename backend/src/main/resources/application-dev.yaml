@@ -13,3 +13,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+# Additional development-specific configurations can be added here
+project:
+  path:
+    files:
+      image: images/

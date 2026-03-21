@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestControllerAdvice
 public class MyGlobalExceptionHandler {
-    
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex,
