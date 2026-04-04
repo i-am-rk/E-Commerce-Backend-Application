@@ -1,6 +1,14 @@
 name: dev-YAML
 environment: development
 spring:
+  security:
+    user:
+      name: user
+      password: demo@123
+  sql:
+    init:
+      mode: always
+      platform: h2
   h2:
     console:
       enabled: true
@@ -9,7 +17,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-       ddl-auto: update
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -19,3 +27,8 @@ project:
   path:
     files:
       image: images/
+
+  jwt:
+    secret: mySecretKey123!#03584
+    expiration-ms: 30000000000000
+
